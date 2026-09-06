@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Agenda de Contactos Personal</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body class="container py-4">
+    <h1 class="mb-4">Agenda de Contactos Personal</h1>
+    
+    <!-- BARRA DE BÚSQUEDA (Nombre o Correo) -->
+    <form method="GET" class="mb-4 d-flex gap-2">
+        <input type="text" name="q" value="{{ query }}" class="form-control" placeholder="Buscar por nombre o correo...">
+        <button type="submit" class="btn btn-outline-primary">Buscar</button>
+        {% if query %}
+            <a href="{% url 'index' %}" class="btn btn-outline-secondary">Limpiar</a>
+        {% endif %}
+    </form>
+
+    <div class="row">
+        <!-- FORMULARIO: Nombre, Teléfono, Correo, Dirección -->
+        <div class="col-md-4">
+            <h3>{% if editando %}Editar{% else %}Agregar{% endif %} Contacto</h3>
+            <form method="POST">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary w-100">
+                    {% if editando %}Actualizar{% else %}Guardar{% endif %}
+                </button>
+            </form>
+        </div>
+
+        <!-- LISTA DE CONTACTOS -->
+        <div class="col-md-8">
+            <h3>Lista de Contactos</h3>
+            <div class="list-group">
+                {% for contacto in contactos %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="mb-1">{{ contacto.nombre }}</h5>
+                            <p class="mb-1"><strong>Tel:</strong> {{ contacto.telefono }} | <strong>Email:</strong> {{ contacto.email }}</p>
+                            {% if contacto.direccion %}
+                                <small class="text-muted"><strong>Dir:</strong> {{ contacto.direccion }}</small>
+                            {% endif %}
+                        </div>
+                        <div class="btn-group">
+                            <a href="{% url 'editar' contacto.id %}" class="btn btn-sm btn-warning">Editar</a>
+                            <a href="{% url 'eliminar' contacto.id %}" class="btn btn-sm btn-danger">Eliminar</a>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="list-group-item text-muted">No se encontraron contactos.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
