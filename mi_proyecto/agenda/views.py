@@ -49,5 +49,8 @@ def editar(request, id):
 
 def eliminar(request, id):
     contacto = get_object_or_404(Contacto, id=id)
-    contacto.delete()
-    return redirect('index')
+    if request.method == 'POST':
+        contacto.delete()
+        return redirect('index')
+
+    return render(request, 'agenda/eliminar.html', {'contacto': contacto})
